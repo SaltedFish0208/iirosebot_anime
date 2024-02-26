@@ -18,7 +18,7 @@ async def animesearch(Message, text):
     if len(para) == 1:
         num = 1
         anime = []
-        animelist = requests.post(f'{api}2&msg={para[0]}').json()
+        animelist = requests.post(f'{api}3&msg={para[0]}').json()
         for i in animelist["data"]:
             anime.append(f'番剧编号：{num}\n番剧名称：{i["name"]}\n[{i["image"]}#e]\n番剧状态：{i["ji"]}\n年份：{i["year"]}')
             num+=1
@@ -27,7 +27,7 @@ async def animesearch(Message, text):
                         f'{newline+newline.join(anime)}\n'
                         f'使用“>番剧 {text} 番剧编号”命令获取详情')
     elif len(para) == 2:
-        animeinfo = requests.post(f'{api}2&msg={para[0]}&n={para[1]}').json()
+        animeinfo = requests.post(f'{api}3&msg={para[0]}&n={para[1]}').json()
         await API.send_msg(Message,
                            f'以下是番剧{animeinfo["data"]["name"]}的详情\n'
                            f'番剧名称：{animeinfo["data"]["name"]}\n'
@@ -37,6 +37,12 @@ async def animesearch(Message, text):
                            f'番剧集数：{len(animeinfo["data"]["playlist"])}集\n'
                            f'使用“>番剧 {para[0]} {para[1] } 集数”点播番剧\n'
                            f'使用“>发送 {para[0]} {para[1] } 集数”以视频方式发送')
+    elif len(para) == 3:
+        animedata = requests.post(f'{api}3&msg={para[0]}&n={para[1]}&nn={para[2]}').json()
+        await API.play_media(media_type=False,
+                             media_url=animedata["data"]["play_url"],
+                             media_name=animedata["data"]["name"],
+                             media_auther=animedata["data"]["play_num"])
 
 @on_command('>发送 ', True, command_type=[MessageType.room_chat, MessageType.private_chat])
 async def animefile(Message, text):
